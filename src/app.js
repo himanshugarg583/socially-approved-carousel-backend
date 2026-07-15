@@ -12,10 +12,20 @@ export function createApp() {
 
   app.set("trust proxy", 1);
   app.use(helmet());
+  const allowedOrigins = config.corsOrigin.split(",").map((v) => v.trim());
   app.use(
     cors({
-      origin: config.corsOrigin.split(",").map((value) => value.trim()),
-      methods: ["GET", "POST"]
+      origin: (origin, callback) => {
+        // Allow requests with no origin (mobile apps, curl, etc.)
+        if (!origin) return callback(null, true);
+        // Allow wildcard
+        if (allowedOrigins.includes("*")) return callback(null, true);
+        // Allow matched origins
+        if (allowedOrigins.includes(origin)) return callback(null, true);
+        callback(new Error(`CORS: Origin ${origin} not allowed`));
+      },
+      methods: ["GET", "POST"],
+      credentials: true
     })
   );
   app.use(express.json({ limit: "16kb" }));
