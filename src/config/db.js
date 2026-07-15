@@ -11,7 +11,8 @@ export const pool = mysql.createPool({
   connectionLimit: config.db.connectionLimit,
   queueLimit: 0,
   namedPlaceholders: true,
-  charset: "utf8mb4_unicode_ci"
+  charset: "utf8mb4_unicode_ci",
+  ssl: config.db.ssl ? { rejectUnauthorized: false } : undefined
 });
 
 export async function verifyConnection() {

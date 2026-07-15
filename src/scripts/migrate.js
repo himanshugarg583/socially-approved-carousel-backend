@@ -15,7 +15,8 @@ async function migrate() {
     port: config.db.port,
     user: config.db.user,
     password: config.db.password,
-    multipleStatements: true
+    multipleStatements: true,
+    ssl: config.db.ssl ? { rejectUnauthorized: false } : undefined
   });
 
   try {
